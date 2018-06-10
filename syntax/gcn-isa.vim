@@ -10,6 +10,17 @@ endif
 
 syn match gcn3Comment "//.*$"
 
+syn match gcn3Constant "\v[0-9]+"     " 42
+syn match gcn3Constant "\v0[xX]\x+"   " 0xdeadc0de
+syn match gcn3Constant "\v\d+\.\d+"   " 3.14
+
+syn keyword gcn3SpecialRegister vcc
+
+syn match gcn3VectorRegister "\vv\[\d+\:\d+\]"
+syn match gcn3VectorRegister "\vv\d+"
+
+syn match gcn3ScalarRegister "\vs\[\d+\:\d+\]"
+syn match gcn3ScalarRegister "\vs\d+"
 
 " Program Flow Control
 
@@ -155,15 +166,19 @@ syn keyword gcn3DataShareOp ds_write_b32 ds_write2_b32 ds_write2st64_b32
 syn keyword gcn3DataShareOp ds_permute_b32 ds_bpermute_b32
 " incomplete
 
+hi def link gcn3Constant            Constant
 hi def link gcn3Comment             Comment
-hi def link gcn3ProgramFlowControl  Type
-hi def link gcn3ScalarALU           Type
-hi def link gcn3VectorArithmetic    Type
-hi def link gcn3VectorMove          Type
-hi def link gcn3ScalarMemory        Type
-hi def link gcn3FlatOp              Type
-hi def link gcn3DataShareOp         Type
+hi def link gcn3ProgramFlowControl  Identifier
 hi def link gcn3WaitCounter         Statement
+hi def link gcn3ScalarALU           Identifier
+hi def link gcn3VectorArithmetic    Identifier
+hi def link gcn3VectorMove          Identifier
+hi def link gcn3ScalarMemory        Identifier
+hi def link gcn3FlatOp              Identifier
+hi def link gcn3DataShareOp         Identifier
+hi def link gcn3ScalarRegister      Identifier
+hi def link gcn3VectorRegister      Identifier
+hi def link gcn3SpecialRegister     Type
 
 let b:current_syntax = "gcn-isa"
 
