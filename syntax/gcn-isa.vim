@@ -1,8 +1,5 @@
 " Vim syntax file
 " Language:     AMD GCN3 ISA
-" Version:      0.2
-" Maintainer:   Thibault 'Ryp' Schueller <ryp.sqrt@gmail.com>
-" File Types:   .gcn
 
 if exists("b:current_syntax")
   finish
@@ -18,10 +15,13 @@ syn match gcn3Constant "\v\d+\.\d+" " 3.14
 syn match gcn3Label "\vlabel_\x+"   " label_F1337
 
 syn keyword gcn3Special vcc exec
-syn keyword gcn3Special dmask unorm glc da r128 tfe lwe slc
-syn keyword gcn3Special done vm m0 clamp div abs
+syn keyword gcn3Special dmask unorm da r128 glc slc tfe lwe
+syn keyword gcn3Special done vm off
+syn keyword gcn3Special m0 clamp div abs lds
 syn match gcn3Special "\voffset[0-1]?"
 syn match gcn3Special "\vmrt[0-8]"
+syn match gcn3Special "\vpos[0-9]"      " FIXME find the real range
+syn match gcn3Special "\vparam[0-9]"    " FIXME find the real range
 
 syn match gcn3VectorRegister "\vv\[\d+\:\d+\]"
 syn match gcn3VectorRegister "\vv\d+"
@@ -43,7 +43,7 @@ syn keyword gcn3ProgramFlowControl s_cbranch_vccz s_cbranch_vccnz
 syn keyword gcn3ProgramFlowControl s_cbranch_execz s_cbranch_execnz
 syn keyword gcn3ProgramFlowControl s_cbranch_cdbguser s_cbranch_cdbgsys
 syn keyword gcn3ProgramFlowControl s_cbranch_cdbgsys_or_user s_cbranch_cdbgsys_and_user
-syn keyword gcn3ProgramFlowControl s_setpc s_swappc s_getpc
+syn keyword gcn3ProgramFlowControl s_setpc_b64 s_swappc_b64 s_getpc_b64
 syn keyword gcn3ProgramFlowControl s_cbranch_fork s_cbranch_join
 syn keyword gcn3ProgramFlowControl s_setvskip
 
@@ -161,7 +161,7 @@ syn keyword gcn3VectorALU v_cvt_pknorm_i16_f32 v_cvt_pknorm_u16_f32
 syn keyword gcn3VectorALU v_cvt_pkrtz_f16_f32
 syn keyword gcn3VectorALU v_cvt_pk_u16_u32 v_cvt_pk_i16_i32
 syn keyword gcn3VectorALU v_bfm_b32
-syn keyword gcn3VectorALU v_interp_p1_f32 v_interp_p2_f32 v_interp_mov_f3
+syn keyword gcn3VectorALU v_interp_p1_f32 v_interp_p2_f32 v_interp_mov_f32
 syn keyword gcn3VectorALU v_interp
 syn keyword gcn3VectorALU v_interp_p1ll_f16 v_interp_p1lv_f16
 syn keyword gcn3VectorALU v_interp_p2_f16
@@ -237,58 +237,60 @@ syn keyword gcn3SMEM s_dcache_wb s_dcache_wb_vol
 syn keyword gcn3SMEM s_memtime s_memrealtime
 
 " Vector Memory Operations
-" syn match gcn3VMEM "\v"
-" syn keyword gcn3VMEM
 
-" incomplete
-syn keyword gcn3FlatOp flat_load_ubyte       flat_store_byte
-syn keyword gcn3FlatOp flat_load_sbyte
-syn keyword gcn3FlatOp flat_load_ushort      flat_store_short
-syn keyword gcn3FlatOp flat_load_sshort
-syn keyword gcn3FlatOp flat_load_dword       flat_store_dword
-syn keyword gcn3FlatOp flat_load_dwordx2     flat_store_dwordx2
-syn keyword gcn3FlatOp flat_load_dwordx3     flat_store_dwordx3
-syn keyword gcn3FlatOp flat_load_dwordx4     flat_store_dwordx4
-syn keyword gcn3FlatOp flat_atomic_swap      flat_atomic_swap_x2
-syn keyword gcn3FlatOp flat_atomic_cmpswap   flat_atomic_cmpswap_x2
-syn keyword gcn3FlatOp flat_atomic_add       flat_atomic_add_x2
-syn keyword gcn3FlatOp flat_atomic_sub       flat_atomic_sub_x2
-syn keyword gcn3FlatOp flat_atomic_smin      flat_atomic_smin_x2
-syn keyword gcn3FlatOp flat_atomic_umin      flat_atomic_umin_x2
-syn keyword gcn3FlatOp flat_atomic_smax      flat_atomic_smax_x2
-syn keyword gcn3FlatOp flat_atomic_umax      flat_atomic_umax_x2
-syn keyword gcn3FlatOp flat_atomic_and       flat_atomic_and_x2
-syn keyword gcn3FlatOp flat_atomic_or        flat_atomic_or_x2
-syn keyword gcn3FlatOp flat_atomic_xor       flat_atomic_xor_x2
-syn keyword gcn3FlatOp flat_atomic_inc       flat_atomic_inc_x2
-syn keyword gcn3FlatOp flat_atomic_dec       flat_atomic_dec_x2
+""" Vector Memory Buffer Operations
+syn match gcn3VMEM "\vtbuffer_(load|store)_format(_d16)?_(x|xy|xyz|xyzw)"
+syn match gcn3VMEM "\vbuffer_(load|store)_format(_d16)?_(x|xy|xyz|xyzw)"
+syn match gcn3VMEM "\vbuffer_(load|store)_(sbyte|ubyte|sshort|ushort|dword(x(2|3|4))?)"
+syn match gcn3VMEM "\vbuffer_atomic_(swap|cmpswap|add|sub|((s|u)(min|max))|and|or|xor|inc|dec)(_x2)?"
+syn keyword gcn3VMEM buffer_store_lds_dword
+syn keyword gcn3VMEM buffer_wbinvl1 buffer_wbinvl1_vol
 
-syn keyword gcn3DataShareOp ds_add_u32 ds_sub_u32
-syn keyword gcn3DataShareOp ds_rsub_u32
-syn keyword gcn3DataShareOp ds_inc_u32 ds_dec_u32
-syn keyword gcn3DataShareOp ds_min_i32 ds_max_i32
-syn keyword gcn3DataShareOp ds_min_u32 ds_max_u32
-syn keyword gcn3DataShareOp ds_and_b32 ds_or_b32 ds_xor_b32
-syn keyword gcn3DataShareOp ds_mskor_b32
-syn keyword gcn3DataShareOp ds_write_b32 ds_write2_b32 ds_write2st64_b32
-" incomplete
-syn keyword gcn3DataShareOp ds_permute_b32 ds_bpermute_b32
-" incomplete
+""" Vector Memory Image Operations
+syn match gcn3VMEM "\vimage_load(_(mip|pck|pck_sgn|mip_pck|mip_pck_sgn))?"
+syn match gcn3VMEM "\vimage_store(_(mip|pck|mip_pck))?"
+syn match gcn3VMEM "\vimage_atomic_(swap|cmpswap|add|sub|((s|u)(min|max))|and|or|xor|inc|dec)"
+" TODO finish sample and gather4
+syn match gcn3VMEM "\vimage_sample(_(cl|d|d_cl|l|b|b_cl|lz|c|c_cl))?"
+syn match gcn3VMEM "\vimage_gather4(_(lz))?"
+syn keyword gcn3VMEM image_get_resinfo image_get_lod
 
+" Flat Memory Instructions
+syn match gcn3FlatMEM "\vflat_load_(((u|s)(byte|short))|(dword(x(2|3|4))?))"
+syn match gcn3FlatMEM "\vflat_store_(byte|short|(dword(x(2|3|4))?))"
+syn match gcn3FlatMEM "\vflat_atomic_(swap|cmpswap|add|sub|((s|u)(min|max))|and|or|xor|inc|dec)(_x2)?"
+
+" Data Share Operations
+syn match gcn3DataShareOp "\vds_read_((b(32|64|96|128))|((u|i)(8|16)))"
+syn match gcn3DataShareOp "\vds_read2(st64)?_b(32|64)"
+syn match gcn3DataShareOp "\vds_write_b(8|16|32|64|96|128)"
+syn match gcn3DataShareOp "\vds_write2(st64)?_b(32|64)"
+syn match gcn3DataShareOp "\vds_wrxchg2(st64)?_rtn_b(32|64)"
+syn match gcn3DataShareOp "\vds_b?permute_b(32|64)"
+" TODO incomplete
+
+syn keyword gcn3GraphicsOp exp
+
+" Common
 hi def link gcn3Constant            Constant
 hi def link gcn3Comment             Comment
-hi def link gcn3ProgramFlowControl  Identifier
+
+" GCN Specific syntax
 hi def link gcn3WaitCounter         Statement
-hi def link gcn3ScalarALU           Identifier
-hi def link gcn3VectorALU           Identifier
-hi def link gcn3SMEM                Identifier
-" hi def link gcn3VMEM                Identifier
-hi def link gcn3FlatOp              Identifier
-hi def link gcn3DataShareOp         Identifier
 hi def link gcn3ScalarRegister      Identifier
 hi def link gcn3VectorRegister      Identifier
 hi def link gcn3Label               Special
 hi def link gcn3Special             Type
+
+" GCN Instructions
+hi def link gcn3ProgramFlowControl  Identifier
+hi def link gcn3ScalarALU           Identifier
+hi def link gcn3VectorALU           Identifier
+hi def link gcn3SMEM                Identifier
+hi def link gcn3VMEM                Identifier
+hi def link gcn3FlatMEM             Identifier
+hi def link gcn3DataShareOp         Identifier
+hi def link gcn3GraphicsOp          Identifier
 
 let b:current_syntax = "gcn-isa"
 
