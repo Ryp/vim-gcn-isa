@@ -16,7 +16,7 @@ syn match gcn3Label "\vlabel_\x+"   " label_F1337
 
 syn keyword gcn3Special vcc exec
 syn keyword gcn3Special dmask unorm da r128 glc slc tfe lwe
-syn keyword gcn3Special done vm off
+syn keyword gcn3Special done vm off idxen
 syn keyword gcn3Special m0 clamp div abs lds
 syn match gcn3Special "\voffset[0-1]?"
 syn match gcn3Special "\vmrt[0-8]"
