@@ -25,6 +25,7 @@ syn keyword gcn3Special vcc exec
 syn keyword gcn3Special dmask unorm da r128 glc slc tfe lwe
 syn keyword gcn3Special done vm off idxen format
 syn keyword gcn3Special m0 clamp div abs lds
+syn keyword gcn3Special row_shr row_bcast row_mask
 
 " offset, offset0 and offset1
 syn match gcn3Special "\v<offset[0-1]?>"
