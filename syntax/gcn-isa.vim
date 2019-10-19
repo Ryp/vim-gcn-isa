@@ -253,8 +253,8 @@ syn keyword gcn3VectorALU v_mad_legacy_f32
 syn keyword gcn3VectorALU v_exp_legacy_f32
 syn keyword gcn3VectorALU v_log_legacy_f32
 syn keyword gcn3VectorALU v_mac_legacy_f32
-syn keyword gcn3ScalarALU v_movrels_b32 v_movreld_b32 v_movrelsd_b32
-syn keyword gcn3ScalarALU v_perm_b32
+syn keyword gcn3VectorALU v_movrels_b32 v_movreld_b32 v_movrelsd_b32
+syn keyword gcn3VectorALU v_perm_b32
 
 """ Compare Operations
 syn match gcn3VectorALU "\v<v_(cmp|cmpx)_(f|lt|eq|le|gt|lg|ge|t|ne)_[ui](16|32|64)>"
