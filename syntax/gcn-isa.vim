@@ -25,7 +25,6 @@ syn keyword gcn3Special vcc exec
 syn keyword gcn3Special dmask unorm da r128 glc slc tfe lwe
 syn keyword gcn3Special done comp vm off idxen format
 syn keyword gcn3Special m0 clamp div abs lds
-syn keyword gcn3Special row_shr row_bcast row_mask
 syn keyword gcn3Special offen
 syn keyword gcn3Special p0
 
@@ -39,6 +38,13 @@ syn match gcn3Special "\v<pos1?\d>"
 syn match gcn3Special "\v<param\d+>"
 " attr0-31
 syn match gcn3Special "\v<attr[1-3]?\d>"
+
+" Data-Parallel Primitives
+syn keyword gcn3DPP row_mask bank_mask
+syn keyword gcn3DPP quad_perm
+syn keyword gcn3DPP wave_shl wave_shr wave_ror wave_rol
+syn keyword gcn3DPP row_shl row_shr row_ror
+syn keyword gcn3DPP row_mirror row_half_mirror row_bcast
 
 " attr.x
 " FIXME Find possible permutations
@@ -340,6 +346,7 @@ hi def link gcn3WaitCounter         Statement
 hi def link gcn3ScalarRegister      Identifier
 hi def link gcn3VectorRegister      Identifier
 hi def link gcn3Label               Special
+hi def link gcn3DPP                 Special
 hi def link gcn3Special             Type
 hi def link gcn3SwizzleOp           Special
 hi def link gcn3DataFormat          Statement
