@@ -45,6 +45,7 @@ syn keyword gcn3DPP quad_perm
 syn keyword gcn3DPP wave_shl wave_shr wave_ror wave_rol
 syn keyword gcn3DPP row_shl row_shr row_ror
 syn keyword gcn3DPP row_mirror row_half_mirror row_bcast
+syn keyword gcn3DPP bound_ctrl
 
 " attr.x
 " FIXME Find possible permutations
